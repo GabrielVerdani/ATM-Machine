@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATM</title>
+</head>
+
+<body>
+    <script>
+        var customWindow = window.open('', '_blank', '');
+        customWindow.close();
+        var autorizado = false;
+        var saldo = 100;
+        var nome;
+        var extrato =
+            `03/08/2021 - Mercado BomPreco - Débito - R$109,77
+08/08/2021 - Bar do Jão - Débito - R$31,40
+31/08/2021 - Padaria BelaVista - Débito - R$10,97
+02/09/2021 - Mercado BomPreco - Débito - R$159,73
+10/09/2021 - Supermercado Extra - Débito - R$39,99`;
+
+        function inicio() {
+            nome = prompt("Por favor, informe seu nome:").trim();
+
+            if (nome == "" || nome == undefined) {
+                alert("Insira um nome válido.");
+                inicio();
+            } else {
+                alert(`Olá ${nome}, é um prazer ter você por aqui!`);
+                escolhas();
+            };
+        };
+
+        function escolhas() {
+            autorizado = false;
+            var escolha = parseInt(prompt(
+                'Selecione uma opção:\n1) Saldo\n2) Extrato\n3) Saque\n4) Depósito\n5) Transferência\n6) Sair'
+            ));
+
+            switch (escolha) {
+                case 1:
+                    ver_saldo();
+                    break;
+                case 2:
+                    mostrar_extrato();
+                    break;
+                case 3:
+                    fazer_saque();
+                    break;
+                case 4:
+                    fazer_deposito();
+                    break;
+                case 5:
+                    fazer_transferencia();
+                    break;
+                case 6:
+                    sair();
+                    break;
+                default:
+                    erro();
+            }
+        }
+
+        function ver_saldo() {
+            if (autorizado || verificar_senha()) {
+                autorizado = true;
+                alert('Seu saldo atual é: ' + saldo.toLocaleString('pt-br', {
+                    style: 'currency',
+                    currency: 'BRL'
+                }));
+                escolhas();
+            }
+        }
+
+        function fazer_deposito() {
+            var deposito = parseFloat(prompt('Qual o valor para depósito?'));
+            // Not a Number
+            if (isNaN(deposito) || deposito === '') {
+                alert('Por favor, informe um número:');
+                fazer_deposito();
+            } else if (deposito <= 0) {
+                alert("Operação não autorizada.");
+                escolhas()
+            } else {
+                saldo += deposito;
+                ver_saldo();
+            }
+        }
+
+        function fazer_saque() {
+            if (verificar_senha()) {
+                autorizado = true;
+                var saque = parseFloat(prompt('Qual o valor para saque?'));
+                if (isNaN(saque) || saque === '') {
+                    alert('Por favor, informe um número:');
+                    fazer_saque();
+                } else if (saque > saldo || saque <= 0) {
+                    alert('Operação não autorizada');
+                    escolhas()
+                } else {
+                    saldo -= saque;
+                    ver_saldo();
+                }
+            }
+        }
+
+        function fazer_transferencia() {
+            if (verificar_senha()) {
+                autorizado = true
+                var conta = Number(prompt("Para que conta você deseja fazer essa transferência?"))
+                if (isNaN(conta) || conta === '') {
+                    alert('Apenas números.');
+                    fazer_transferencia();
+                } else {
+                    var valor = Number(prompt("Qual o valor para transferência?"))
+                    if (valor <= 0 || valor > saldo) {
+                        alert('Operação não autorizada.');
+                        escolhas();
+                    } else if (isNaN(valor) || valor == "") {
+                        alert("Por favor, informe um número:")
+                        fazer_transferencia()
+                    } else {
+                        saldo -= valor;
+                        ver_saldo();
+                    }
+                }
+            }
+
+        }
+
+        function mostrar_extrato() {
+            if (verificar_senha()) {
+                autorizado = true
+                alert(extrato);
+                escolhas();
+            }
+        }
+
+        function verificar_senha() {
+            var senhaInserida = Number(prompt('Digite sua senha:'))
+            if (senhaInserida === 3589) {
+                return true;
+            } else {
+                alert("Senha incorreta.");
+                escolhas();
+            }
+        }
+
+        function erro() {
+            alert('Por favor, informe um número entre 1 e 6');
+            escolhas();
+        }
+
+        function sair() {
+            var confirma = confirm('Você deseja sair?');
+            if (confirma) {
+                alert(`${nome}, foi um prazer ter você por aqui!`)
+                window.close();
+            } else {
+                escolhas();
+            }
+        }
+
+        inicio();
+    </script>
+</body>
+
+</html>
